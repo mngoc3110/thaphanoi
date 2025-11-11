@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Tương Tác Tuần Tự (Có Xác Nhận)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .video-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        video {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        /* Ẩn các phần tử lúc ban đầu */
+        #video2-container,
+        #video3-container,
+        #completion-message,
+        .confirm-button {
+            display: none;
+        }
+        .status-message {
+            font-style: italic;
+            color: #333;
+        }
+        .status-complete {
+            color: green;
+            font-weight: bold;
+        }
+        .confirm-button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .confirm-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Bài học: Xem video tuần tự</h1>
+    <p>Vui lòng xem hết video và nhấn nút "Xác nhận" để mở khóa video tiếp theo. Bạn không thể tua nhanh video.</p>
+
+    <div class="video-container" id="video1-container">
+        <h3>1. Video Giới thiệu</h3>
+        <video id="video1" width="600" controls>
+            <source src="nhiphan.mov" type="video/mp4">
+            Trình duyệt của bạn không hỗ trợ thẻ video.
+        </video>
+        <p class="status-message" id="video1-status"></p>
+        <button class="confirm-button" id="confirm-btn-1">Xác nhận đã xem Video 1</button>
+    </div>
+    
+
+    <h2 id="completion-message" style="color: blue;">
+        🎉 Chúc mừng! Bạn đã hoàn thành tất cả các video.
+    </h2>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Lấy các phần tử video
+            const video1 = document.getElementById('video1');
+            const video2 = document.getElementById('video2');
+            const video3 = document.getElementById('video3');
+
+            // Lấy các "container" (khung chứa)
+            const video2Container = document.getElementById('video2-container');
+            const video3Container = document.getElementById('video3-container');
+
+            // Lấy các phần tử trạng thái
+            const status1 = document.getElementById('video1-status');
+            const status2 = document.getElementById('video2-status');
+            const status3 = document.getElementById('video3-status');
+            const completionMessage = document.getElementById('completion-message');
+
+            // Lấy các nút xác nhận
+            const confirmBtn1 = document.getElementById('confirm-btn-1');
+            const confirmBtn2 = document.getElementById('confirm-btn-2');
+            const confirmBtn3 = document.getElementById('confirm-btn-3');
+
+            // --- HÀM CHẶN TUA VIDEO (FAST-FORWARD) ---
+            const preventFastForward = (event) => {
+                const video = event.target;
+                if (video.played.length > 0) {
+                    const lastPlayedTime = video.played.end(video.played.length - 1);
+                    if (video.currentTime > lastPlayedTime + 1) { 
+                        video.currentTime = lastPlayedTime;
+                        alert("Vui lòng xem video tuần tự, không được phép tua.");
+                    }
+                }
+            };
+
+            // Áp dụng hàm chặn tua cho cả 3 video
+            video1.addEventListener('seeking', preventFastForward);
+            video2.addEventListener('seeking', preventFastForward);
+           video3.addEventListener('seeking', preventFastForward);
+
+            // --- HÀM XÁC NHẬN ĐÃ XEM XONG ---
+
+            // Khi Video 1 kết thúc
+            video1.addEventListener('ended', () => {
+                status1.textContent = '✔️ Đã xem xong Video 1. Vui lòng nhấn nút xác nhận bên dưới.';
+                status1.className = 'status-message status-complete';
+                confirmBtn1.style.display = 'block'; // Hiển thị nút xác nhận 1
+            });
+
+            // Khi Video 2 kết thúc
+            video2.addEventListener('ended', () => {
+                status2.textContent = '✔️ Đã xem xong Video 2. Vui lòng nhấn nút xác nhận bên dưới.';
+                status2.className = 'status-message status-complete';
+                confirmBtn2.style.display = 'block'; // Hiển thị nút xác nhận 2
+            });
+
+            // Khi Video 3 kết thúc
+            video3.addEventListener('ended', () => {
+                status3.textContent = '✔️ Đã xem xong Video 3. Vui lòng nhấn nút xác nhận bên dưới.';
+                status3.className = 'status-message status-complete';
+                confirmBtn3.style.display = 'block'; // Hiển thị nút xác nhận 3
+            });
+
+            // --- HÀM XỬ LÝ KHI NHẤN NÚT XÁC NHẬN ---
+
+            // Xử lý nút xác nhận 1
+            confirmBtn1.addEventListener('click', () => {
+                video2Container.style.display = 'block'; // Mở khóa video 2
+                status1.textContent = '✔️ Đã xác nhận. Video 2 đã được mở khóa.';
+                confirmBtn1.style.display = 'none'; // Ẩn nút 1 đi
+            });
+
+            // Xử lý nút xác nhận 2
+            confirmBtn2.addEventListener('click', () => {
+                video3Container.style.display = 'block'; // Mở khóa video 3
+                status2.textContent = '✔️ Đã xác nhận. Video 3 đã được mở khóa.';
+                confirmBtn2.style.display = 'none'; // Ẩn nút 2 đi
+            });
+
+            // Xử lý nút xác nhận 3
+            confirmBtn3.addEventListener('click', () => {
+                completionMessage.style.display = 'block'; // Hiển thị thông báo hoàn thành
+                status3.textContent = '✔️ Đã xác nhận. Bạn đã hoàn thành khóa học!';
+                confirmBtn3.style.display = 'none'; // Ẩn nút 3 đi
+            });
+        });
+    </script>
+
+</body>
+</html>
